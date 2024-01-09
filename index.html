@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Information Table with Filters</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    #filters {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Employee Information Table with Filters</h1>
+
+  <div id="filters">
+    <label>
+      Gender:
+      <select id="genderFilter">
+        <option value="">All</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+    </label>
+
+    <label>
+      Salary Range:
+      <input type="text" id="minSalary" placeholder="Min">
+      <input type="text" id="maxSalary" placeholder="Max">
+    </label>
+
+    <button onclick="applyFilters()">Apply Filters</button>
+    <button onclick="resetFilters()">Reset Filters</button>
+  </div>
+
+  <div id="tableContainer"></div>
+
+  <script>
+    const employeeList = [
+      { name: 'John Doe', age: 30, salary: 50000, gender: 'Male', id: '001' },
+      { name: 'Jane Smith', age: 25, salary: 45000, gender: 'Female', id: '002' },
+      // Add more objects as needed
+    ];
+
+    function createTable(data) {
+      const tableContainer = document.getElementById('tableContainer');
+      const table = document.createElement('table');
+      table.setAttribute('id', 'employeeTable');
+
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+      Object.keys(data[0]).forEach(key => {
+        const th = document.createElement('th');
+        th.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      data.forEach(item => {
+        const row = document.createElement('tr');
+        Object.values(item).forEach(value => {
+          const td = document.createElement('td');
+          td.textContent = value;
+          row.appendChild(td);
+        });
+        tbody.appendChild(row);
+      });
+      table.appendChild(tbody);
+
+      tableContainer.innerHTML = '';
+      tableContainer.appendChild(table);
+    }
+
+    function applyFilters() {
+      const genderFilter = document.getElementById('genderFilter').value;
+      const minSalary = parseInt(document.getElementById('minSalary').value) || 0;
+      const maxSalary = parseInt(document.getElementById('maxSalary').value) || Infinity;
+
+      const filteredList = employeeList.filter(item => {
+        const salary = parseInt(item.salary);
+        return (item.gender.includes(genderFilter) || genderFilter === "") &&
+          (salary >= minSalary && salary <= maxSalary);
+      });
+
+      createTable(filteredList);
+    }
+
+    function resetFilters() {
+      document.getElementById('genderFilter').value = '';
+      document.getElementById('minSalary').value = '';
+      document.getElementById('maxSalary').value = '';
+      createTable(employeeList);
+    }
+
+    // Initial display
+    createTable(employeeList);
+  </script>
+
+</body>
+
+</html>
