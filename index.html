@@ -1,10 +1,46 @@
+<!-- // Function to generate a random gender
+function getRandomGender() {
+  return Math.random() < 0.5 ? 'Male' : 'Female';
+}
+
+// Function to generate a random salary between 30000 and 80000
+function getRandomSalary() {
+  return Math.floor(Math.random() * (80000 - 30000 + 1)) + 30000;
+}
+
+// Function to generate a random employee
+function generateRandomEmployee(id) {
+  const genders = ['Male', 'Female'];
+  const names = ['John', 'Jane', 'Bob', 'Alice', 'Charlie', 'Emma', 'David', 'Olivia', 'James', 'Sophia', "max", "Ram", "Syam"];
+  const titles = ["Smith", "Bond", "Cavil", "Cate", "Lancaster", "Snow", "Targaryians"]
+  const randomName = names[Math.floor(Math.random() * names.length)];
+  const randomTitle = titles[Math.floor(Math.random() * titles.length)];
+
+  return {
+    id: id.toString().padStart(3, '0'),
+    name: randomName + ' ' + randomTitle,
+    age: Math.floor(Math.random() * 20) + 20, // Age between 20 and 40
+    salary: getRandomSalary(),
+    gender: getRandomGender(),
+  };
+}
+
+// Generate a list of 100 employees
+const employeeList = Array.from({ length: 100 }, (_, index) => generateRandomEmployee(index + 1));
+
+ -->
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Employee Information Table with Filters</title>
+  <title>Employee Information Table with Filters and Search</title>
+
+  <!-- Include Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -35,27 +71,39 @@
     #filters {
       margin-bottom: 20px;
     }
+
+    .checkbox-container {
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 
 <body>
 
-  <h1>Employee Information Table with Filters</h1>
+  <h1>Employee Information Table with Filters and Search</h1>
 
   <div id="filters">
     <label>
       Gender:
-      <select id="genderFilter">
-        <option value="">All</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-      </select>
+      <input type="radio" name="genderFilter" value="" checked> All
+      <input type="radio" name="genderFilter" value="Male"> Male
+      <input type="radio" name="genderFilter" value="Female"> Female
     </label>
 
+    <div class="checkbox-container">
+      <label>Salary Range:</label>
+      <div>
+        <input type="checkbox" id="range0-30000"> 0 - 30000
+        <input type="checkbox" id="range30001-40000"> 30001 - 40000
+        <input type="checkbox" id="range40001-50000"> 40001 - 50000
+        <input type="checkbox" id="range50001-60000"> 50001 - 60000
+        <input type="checkbox" id="range60001"> 60001 and above
+      </div>
+    </div>
+
     <label>
-      Salary Range:
-      <input type="text" id="minSalary" placeholder="Min">
-      <input type="text" id="maxSalary" placeholder="Max">
+      Search by Name:
+      <input type="text" id="searchInput" placeholder="Search">
     </label>
 
     <button onclick="applyFilters()">Apply Filters</button>
@@ -64,12 +112,39 @@
 
   <div id="tableContainer"></div>
 
+  <!-- Include jQuery and Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
   <script>
-    const employeeList = [
-      { name: 'John Doe', age: 30, salary: 50000, gender: 'Male', id: '001' },
-      { name: 'Jane Smith', age: 25, salary: 45000, gender: 'Female', id: '002' },
-      // Add more objects as needed
-    ];
+    function getRandomGender() {
+      return Math.random() < 0.5 ? 'Male' : 'Female';
+    }
+
+    // Function to generate a random salary between 30000 and 80000
+    function getRandomSalary() {
+      return Math.floor(Math.random() * (80000 - 30000 + 1)) + 30000;
+    }
+
+    // Function to generate a random employee
+    function generateRandomEmployee(id) {
+      const genders = ['Male', 'Female'];
+      const names = ['John', 'Jane', 'Bob', 'Alice', 'Charlie', 'Emma', 'David', 'Olivia', 'James', 'Sophia', "max", "Ram", "Syam"];
+      const titles = ["Smith", "Bond", "Cavil", "Cate", "Lancaster", "Snow", "Targaryians"]
+      const randomName = names[Math.floor(Math.random() * names.length)];
+      const randomTitle = titles[Math.floor(Math.random() * titles.length)];
+
+      return {
+        id: id.toString().padStart(3, '0'),
+        name: randomName + ' ' + randomTitle,
+        age: Math.floor(Math.random() * 20) + 20, // Age between 20 and 40
+        salary: getRandomSalary(),
+        gender: getRandomGender(),
+      };
+    }
+
+    // Generate a list of 100 employees
+    const employeeList = Array.from({ length: 100 }, (_, index) => generateRandomEmployee(index + 1));
 
     function createTable(data) {
       const tableContainer = document.getElementById('tableContainer');
@@ -103,23 +178,37 @@
     }
 
     function applyFilters() {
-      const genderFilter = document.getElementById('genderFilter').value;
-      const minSalary = parseInt(document.getElementById('minSalary').value) || 0;
-      const maxSalary = parseInt(document.getElementById('maxSalary').value) || Infinity;
+      const genderFilter = document.querySelector('input[name="genderFilter"]:checked').value;
+
+      // Get selected salary ranges
+      const selectedRanges = [];
+      if (document.getElementById('range0-30000').checked) selectedRanges.push('0-30000');
+      if (document.getElementById('range30001-40000').checked) selectedRanges.push('30001-40000');
+      if (document.getElementById('range40001-50000').checked) selectedRanges.push('40001-50000');
+      if (document.getElementById('range50001-60000').checked) selectedRanges.push('50001-60000');
+      if (document.getElementById('range60001').checked) selectedRanges.push('60001');
+
+      const searchQuery = document.getElementById('searchInput').value.toLowerCase();
 
       const filteredList = employeeList.filter(item => {
         const salary = parseInt(item.salary);
+        const isInSelectedRange = selectedRanges.length === 0 || selectedRanges.some(range => {
+          const [min, max] = range.split('-').map(Number);
+          return (salary >= min && salary <= max);
+        });
+
         return (item.gender.includes(genderFilter) || genderFilter === "") &&
-          (salary >= minSalary && salary <= maxSalary);
+          isInSelectedRange &&
+          (item.name.toLowerCase().includes(searchQuery));
       });
 
       createTable(filteredList);
     }
 
     function resetFilters() {
-      document.getElementById('genderFilter').value = '';
-      document.getElementById('minSalary').value = '';
-      document.getElementById('maxSalary').value = '';
+      document.querySelectorAll('input[name="genderFilter"]').forEach(radio => radio.checked = false);
+      document.querySelectorAll('.checkbox-container input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
+      document.getElementById('searchInput').value = '';
       createTable(employeeList);
     }
 
