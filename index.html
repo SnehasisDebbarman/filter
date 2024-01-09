@@ -117,34 +117,11 @@ const employeeList = Array.from({ length: 100 }, (_, index) => generateRandomEmp
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    function getRandomGender() {
-      return Math.random() < 0.5 ? 'Male' : 'Female';
-    }
-
-    // Function to generate a random salary between 30000 and 80000
-    function getRandomSalary() {
-      return Math.floor(Math.random() * (80000 - 30000 + 1)) + 30000;
-    }
-
-    // Function to generate a random employee
-    function generateRandomEmployee(id) {
-      const genders = ['Male', 'Female'];
-      const names = ['John', 'Jane', 'Bob', 'Alice', 'Charlie', 'Emma', 'David', 'Olivia', 'James', 'Sophia', "max", "Ram", "Syam"];
-      const titles = ["Smith", "Bond", "Cavil", "Cate", "Lancaster", "Snow", "Targaryians"]
-      const randomName = names[Math.floor(Math.random() * names.length)];
-      const randomTitle = titles[Math.floor(Math.random() * titles.length)];
-
-      return {
-        id: id.toString().padStart(3, '0'),
-        name: randomName + ' ' + randomTitle,
-        age: Math.floor(Math.random() * 20) + 20, // Age between 20 and 40
-        salary: getRandomSalary(),
-        gender: getRandomGender(),
-      };
-    }
-
-    // Generate a list of 100 employees
-    const employeeList = Array.from({ length: 100 }, (_, index) => generateRandomEmployee(index + 1));
+    const employeeList = [
+      { name: 'John Doe', age: 30, salary: 50000, gender: 'Male', id: '001' },
+      { name: 'Jane Smith', age: 25, salary: 45000, gender: 'Female', id: '002' },
+      // Add more objects as needed
+    ];
 
     function createTable(data) {
       const tableContainer = document.getElementById('tableContainer');
@@ -197,9 +174,9 @@ const employeeList = Array.from({ length: 100 }, (_, index) => generateRandomEmp
           return (salary >= min && salary <= max);
         });
 
-        return (item.gender.includes(genderFilter) || genderFilter === "") &&
+        return ((item.gender.includes(genderFilter) || genderFilter === "") &&
           isInSelectedRange &&
-          (item.name.toLowerCase().includes(searchQuery));
+          (item.name.toLowerCase().includes(searchQuery))) ?? null;
       });
 
       createTable(filteredList);
